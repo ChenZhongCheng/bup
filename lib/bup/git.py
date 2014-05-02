@@ -4,7 +4,7 @@ interact with the Git data structures.
 """
 import os, sys, zlib, time, subprocess, struct, stat, re, tempfile, glob
 from bup.helpers import *
-from bup import _helpers, path, midx, bloom, xstat
+from bup import _helpers, config, path, midx, bloom, xstat
 
 max_pack_size = 1000*1000*1000  # larger packs will slow down pruning
 max_pack_objects = 200*1000  # cache memory usage is about 83 bytes per object
@@ -759,11 +759,14 @@ def rev_list(ref, count=None):
         raise GitError, 'git rev-list returned error %d' % rv
 
 
-def rev_get_date(ref):
-    """Get the date of the latest commit on the specified ref."""
-    for (date, commit) in rev_list(ref, count=1):
-        return date
-    raise GitError, 'no such commit %r' % ref
+def get_commit_dates(refs):
+    """Get the dates for the specified commit refs."""
+    result = []
+    cmd = ['git', 'show', '-s', '--pretty=format:%ct']
+    for chunk in ipartition(config.arg_max - len(cmd), refs):
+        argv = cmd + chunk
+        result += readpipe(argv, preexec_fn=_gitenv).splitlines()
+    return result
 
 
 def rev_parse(committish):

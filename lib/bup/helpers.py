@@ -12,6 +12,11 @@ from bup.options import _tty_width
 tty_width = _tty_width
 
 
+def ipartition(n, items):
+    """Partition items into slices of length n (or less for the last)."""
+    return (items[i:i+n] for i in xrange(0, len(items), n))
+
+
 def atoi(s):
     """Convert the string 's' to an integer. Return 0 if s is not a number."""
     try:
@@ -177,9 +182,9 @@ def unlink(f):
             pass  # it doesn't exist, that's what you asked for
 
 
-def readpipe(argv):
+def readpipe(argv, preexec_fn=None):
     """Run a subprocess and return its output."""
-    p = subprocess.Popen(argv, stdout=subprocess.PIPE)
+    p = subprocess.Popen(argv, stdout=subprocess.PIPE, preexec_fn=preexec_fn)
     out, err = p.communicate()
     if p.returncode != 0:
         raise Exception('subprocess %r failed with status %d'

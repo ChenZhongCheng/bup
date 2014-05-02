@@ -5,6 +5,14 @@ from bup.helpers import *
 from wvtest import *
 
 @wvtest
+def test_ipartition():
+    WVPASSEQ(list(ipartition(1, [])), [])
+    WVPASSEQ(list(ipartition(1, [1, 2, 3])), [[1], [2], [3]])
+    WVPASSEQ(list(ipartition(2, [1, 2, 3])), [[1, 2], [3]])
+    WVPASSEQ(list(ipartition(3, [1, 2, 3])), [[1, 2, 3]])
+    WVPASSEQ(list(ipartition(4, [1, 2, 3])), [[1, 2, 3]])
+
+@wvtest
 def test_parse_num():
     pn = parse_num
     WVPASSEQ(pn('1'), 1)
