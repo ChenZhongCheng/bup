@@ -79,6 +79,8 @@ class BupRequestHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def _process_request(self, path):
         path = urllib.unquote(path)
+        if isinstance(path, unicode):
+            path = path.encode('utf-8')
         print 'Handling request for %s' % path
         try:
             n = top.resolve(path)
