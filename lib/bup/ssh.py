@@ -1,7 +1,7 @@
 """SSH connection.
 Connect to a remote host via SSH and execute a command on the host.
 """
-import sys, os, re, subprocess
+import sys, os, re, subprocess, shlex
 from bup import helpers, path
 
 
@@ -27,7 +27,10 @@ def connect(rhost, port, subcmd):
         cmd = r"""
                    sh -c PATH=%s:'$PATH BUP_DEBUG=%s BUP_FORCE_TTY=%s bup %s'
                """ % (escapedir, buglvl, force_tty, subcmd)
-        argv = ['ssh']
+        if os.environ.get('BUP_SSH'):
+            argv = shlex.split(os.environ.get('BUP_SSH'))
+        else:
+            argv = ['ssh']
         if port:
             argv.extend(('-p', port))
         argv.extend((rhost, '--', cmd.strip()))

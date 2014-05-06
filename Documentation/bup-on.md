@@ -40,6 +40,9 @@ machines on a remote hosting provider, you could back them
 up to a local (much less expensive) computer in your
 basement.
 
+You can also specify a custom ssh command by setting the
+`BUP_SSH` environment variable.
+
 
 # EXAMPLES
 
